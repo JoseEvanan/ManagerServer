@@ -1,0 +1,192 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Matrix Admin</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/bootstrap-responsive.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/fullcalendar.css' %}" />
+<link rel="stylesheet" href="{% static 'css/matrix-style.css' %}" />
+<link rel="stylesheet" href="{% static 'css/matrix-media.css' %}" />
+<link href="{% static 'font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+<link rel="stylesheet" href="{% static 'css/jquery.gritter.css' %}" />
+<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,800' rel='stylesheet' type='text/css'>
+</head>
+<body>
+
+<!--Header-part-->
+<div id="header">
+  <h1><a href="dashboard.html">Server Admin</a></h1>
+</div>
+<!--close-Header-part--> 
+
+
+<!--top-Header-menu-->
+<div id="user-nav" class="navbar navbar-inverse">
+  <ul class="nav">
+    <li  class="" id="profile-messages" ><a title="" href="#" ><i class="icon icon-user"></i>  <span class="text">Welcome User</span><b class="caret"></b></a>
+    </li>
+    <li class=""><a title="" href="#"><i class="icon icon-cog"></i> <span class="text">Settings</span></a></li>
+    <li class=""><a title="" href="login.html"><i class="icon icon-share-alt"></i> <span class="text">Logout</span></a></li>
+  </ul>
+</div>
+<!--close-top-Header-menu-->
+<!--sidebar-menu-->
+<div id="sidebar"><a href="#" class="visible-phone"><i class="icon icon-home"></i> Dashboard</a>
+  <ul>
+    <li class="active"><a href="index.html"><i class="icon icon-home"></i> <span>Dashboard</span></a> </li>
+    <li class="submenu"> <a href="#"><i class="icon icon-info-sign"></i> <span>Error</span> <span class="label label-important">4</span></a>
+      <ul>
+        <li><a href="error403.html">Error 403</a></li>
+        <li><a href="error404.html">Error 404</a></li>
+        <li><a href="error405.html">Error 405</a></li>
+        <li><a href="error500.html">Error 500</a></li>
+      </ul>
+    </li>
+  </ul>
+</div>
+<!--sidebar-menu-->
+
+<!--main-container-part-->
+<div id="content">
+<!--breadcrumbs-->
+  <div id="content-header">
+    <div id="breadcrumb"> <a href="index.html" title="Go to Home" class="tip-bottom"><i class="icon-home"></i> Home</a></div>
+  </div>
+<!--End-breadcrumbs-->
+
+<!--Action boxes-->
+  <div class="container-fluid">
+<!--End-Action boxes-->    
+      
+    <hr>
+    <div class="row-fluid">
+      <div class="span12">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-th"></i> </span>
+            <h5>Lista de Servidores AWS</h5>
+            <span class="label label-info">Featured</span> </div>
+          <div class="widget-content ">
+            <table class="table table-bordered table-striped with-check">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="title-table-checkbox" name="title-table-checkbox" /></th>
+                  <th>Name</th>
+                  <th>ServerId</th>
+                  <th>Status</th>
+                  <th>PublicIp</th>
+                  <th>DNSIp</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                  {% for server in servers%}
+                    <tr class="fila">
+                      <td><input type="checkbox" /></td>
+                      <td class="name">{{ server.name }}</td>
+                      <td class="id_server">{{ server.instance_id }}</td>
+                      <td class="status">
+                         <button type="submit" style="background-color: #{{server.state.col}};">
+                            {{ server.state.name }}
+                         </button>
+                      </td>
+                      {% if server.ip_public %}
+                        <td class="state">{{ server.ip_public }}</td>
+                        <td class="dns_public">{{ server.dns_public }}</td>
+                      {% else %}
+                        <td class="state" ></td>
+                        <td class="dns_public"></td>
+                      {% endif %}
+                      <td>
+                          {% if server.state.name == 'running' %}
+                            <button type="submit" class="btn btn-primary">
+                              <i class="icon-refresh" aria-hidden="true"></i>
+                            </button>
+                            <button type="submit" class="btn btn-danger">
+                              <i class="icon-off" aria-hidden="true"></i>
+                            </button>
+                          {% else %}
+                           <button type="submit" class="btn btn-success">
+                             <i class="icon-play" aria-hidden="true"></i>
+                           </button>
+                          {% endif %}
+                      </td>
+                    </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--end-main-container-part-->
+
+<!--Footer-part-->
+
+<div class="row-fluid">
+  <div id="footer" class="span12"> 2017, Jose Evanan </div>
+</div>
+
+<!--end-Footer-part-->
+
+<script src="{% static 'js/excanvas.min.js' %}"></script> 
+<script src="{% static 'js/jquery.min.js' %}"></script> 
+<script src="{% static 'js/jquery.ui.custom.js' %}"></script> 
+<script src="{% static 'js/bootstrap.min.js' %}"></script> 
+<script src="{% static 'js/jquery.flot.min.js' %}"></script> 
+<script src="{% static 'js/jquery.flot.resize.min.js' %}"></script> 
+<script src="{% static 'js/jquery.peity.min.js' %}"></script> 
+<script src="{% static 'js/fullcalendar.min.js' %}"></script> 
+<script src="{% static 'js/matrix.js' %}"></script> 
+<script src="{% static 'js/matrix.dashboard.js' %}"></script> 
+<script src="{% static 'js/jquery.gritter.min.js' %}"></script> 
+<script src="{% static 'js/matrix.interface.js' %}"></script> 
+<script src="{% static 'js/matrix.chat.js' %}"></script> 
+<script src="{% static 'js/jquery.validate.js' %}"></script> 
+<script src="{% static 'js/matrix.form_validation.js' %}"></script> 
+<script src="{% static 'js/jquery.wizard.js' %}"></script> 
+<script src="{% static 'js/jquery.uniform.js' %}"></script> 
+<script src="{% static 'js/select2.min.js' %}"></script> 
+<script src="{% static 'js/matrix.popover.js' %}"></script> 
+<script src="{% static 'js/jquery.dataTables.min.js' %}"></script> 
+<script src="{% static 'js/matrix.tables.js' %}"></script> 
+
+<script type="text/javascript">
+  // This function is called from the pop-up menus to transfer to
+  // a different page. Ignore if the value returned is a null string:
+$('.btn-primary').click(function(){
+  var id_server = $(this).closest('.fila').find('.id_server').text();
+  $.get(
+      '/reset_server/',
+      {'instance_id': id_server},
+      function(data){
+      }
+  );
+
+})
+$('.btn-danger').click(function(){
+  var id_server = $(this).closest('.fila').find('.id_server').text();
+  $.get(
+      '/stop_server/',
+      {'instance_id': id_server},
+      function(data){
+      }
+  );
+})
+$('.btn-success').click(function(){
+  var id_server = $(this).closest('.fila').find('.id_server').text();
+  $.get(
+      '/start_server/',
+      {'instance_id': id_server},
+      function(data){
+      }
+  );
+})
+</script>
+</body>
+</html>
