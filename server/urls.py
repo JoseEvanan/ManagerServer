@@ -13,4 +13,9 @@ urlpatterns = [
         name='stop_server'),
     url(r'^reset_server/$', views.ResetServerView.as_view(),
         name='reset_server'),
+    url(r'^list_server/$', views.ListServerView.as_view(),
+        name='list_server'),
+    url(r'^save_server/$', views.SaveServerView.as_view(),
+        name='save_server'),
+    
 ]
