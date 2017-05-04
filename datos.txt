@@ -1,0 +1,66 @@
+# Grupos de Seguridad
+
+
+{'ResponseMetadata': {'RetryAttempts': 0, 'HTTPHeaders': {'date': 'Thu, 04 May 2017 23:03:44 GMT', 'server': 'AmazonEC2',
+														'content-type': 'text/xml;charset=UTF-8', 'transfer-encoding': 'chunked', 'vary': 'Accept-Encoding'},
+					  'RequestId': 'dda145c4-aa1f-45dc-ad9e-0b686594084a', 'HTTPStatusCode': 200},
+ 'SecurityGroups': [{'Description': 'default VPC security group',
+ 					 'IpPermissionsEgress': [{'UserIdGroupPairs': [], 'PrefixListIds': [], 'Ipv6Ranges': [],
+  											  'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': '-1'}],
+  					  'GroupName': 'default', 'VpcId': 'vpc-0b1dd76d',
+  					  'IpPermissions': [{'PrefixListIds': [], 'ToPort': 80, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 80,
+  					  					'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					  					{'UserIdGroupPairs': [], 'PrefixListIds': [], 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': '-1'},
+  					  					{'PrefixListIds': [], 'ToPort': 22, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 22,
+  					  					 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					  					 {'PrefixListIds': [], 'ToPort': 0, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 0, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'}],
+  					   'OwnerId': '655407531141', 'GroupId': 'sg-aa5400d7'},
+
+
+  					  {'Description': 'launch-wizard-1 created 2017-03-13T16:30:27.142-05:00',
+  					   'IpPermissionsEgress': [{'UserIdGroupPairs': [], 'PrefixListIds': [], 'Ipv6Ranges': [],
+  					   							'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': '-1'}],
+  					   'GroupName': 'launch-wizard-1', 'VpcId': 'vpc-0b1dd76d',
+  					   'IpPermissions': [{'PrefixListIds': [], 'ToPort': 80, 'Ipv6Ranges': [], 'UserIdGroupPairs': [], 'FromPort': 80,
+  					                      'IpRanges': [{'CidrIp': '201.230.190.195/32'}], 'IpProtocol': 'tcp'},
+  					                     {'PrefixListIds': [], 'ToPort': 22, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 22, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					                     {'PrefixListIds': [], 'ToPort': 40000, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 0, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'}],
+  					    'OwnerId': '655407531141', 'GroupId': 'sg-53cd032c',
+  					    'Tags': [{'Value': 'libre', 'Key': 'Name'}]},
+
+
+
+  					   {'Description': 'launch-wizard-2 created 2017-05-01T19:29:06.624-05:00',
+  					   'IpPermissionsEgress': [{'UserIdGroupPairs': [], 'PrefixListIds': [], 'Ipv6Ranges': [], 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': '-1'}], 'GroupName': 'launch-wizard-2', 'VpcId': 'vpc-0b1dd76d',
+  					   'IpPermissions': [{'PrefixListIds': [], 'ToPort': 80, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 80,
+  					                      'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					                     {'PrefixListIds': [], 'ToPort': 65535, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 0,
+  					                      'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					                     {'PrefixListIds': [], 'ToPort': 22, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 22,
+  					                      'IpRanges': [{'CidrIp':  '0.0.0.0/0'}], 'IpProtocol': 'tcp'},
+  					                     {'PrefixListIds': [], 'ToPort': 40000, 'Ipv6Ranges': [{'CidrIpv6': '::/0'}], 'UserIdGroupPairs': [], 'FromPort': 0,
+  					                      'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'}],
+  					    'OwnerId': '655407531141', 'GroupId': 'sg-34c03a4a'},
+
+
+
+  					    {'Description': 'launch-wizard-3 created 2017-05-04T16:33:08.939-05:00',
+  					     'IpPermissionsEgress': [{'UserIdGroupPairs': [], 'PrefixListIds': [], 'Ipv6Ranges': [], 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': '-1'}],
+  					     'GroupName': 'launch-wizard-3', 'VpcId': 'vpc-0b1dd76d',
+  					     'IpPermissions': [{'PrefixListIds': [], 'ToPort': 80, 'Ipv6Ranges': [], 'UserIdGroupPairs': [], 'FromPort': 80,
+  					     					'IpRanges': [{'CidrIp': '190.238.227.0/24'}], 'IpProtocol': 'tcp'},
+  					     				   {'PrefixListIds': [], 'ToPort': 22, 'Ipv6Ranges': [], 'UserIdGroupPairs': [], 'FromPort': 22, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp'}],
+  					     'OwnerId': '655407531141', 'GroupId': 'sg-81ea37ff', 'Tags': [{'Value': 'nuevo', 'Key': 'Name'}]},
+  					    ]}
+
+190.238.227.0/24
+
+
+--------------------
+
+{'SecurityGroups': [{'IpPermissions': [{'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp', 'ToPort': 80, 'PrefixListIds': [], 'FromPort': 80, 'UserIdGroupPairs': [], 'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}, {'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp', 'ToPort': 65535, 'PrefixListIds': [], 'FromPort': 0, 'UserIdGroupPairs': [], 'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}, {'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp', 'ToPort': 22, 'PrefixListIds': [], 'FromPort': 22, 'UserIdGroupPairs': [], 'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}, {'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'IpProtocol': 'tcp', 'ToPort': 40000, 'PrefixListIds': [], 'FromPort': 0, 'UserIdGroupPairs': [], 'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}], 'GroupId': 'sg-34c03a4a', 'IpPermissionsEgress': [{'IpRanges': [{'CidrIp': '0.0.0.0/0'}], 'PrefixListIds': [], 'IpProtocol': '-1', 'Ipv6Ranges': [], 'UserIdGroupPairs': []}], 'VpcId': 'vpc-0b1dd76d', 'GroupName': 'launch-wizard-2', 'OwnerId': '655407531141', 'Description': 'launch-wizard-2 created 2017-05-01T19:29:06.624-05:00'}], 'ResponseMetadata': {'RetryAttempts': 0, 'RequestId': '5670bed6-278c-4b53-a6d6-97fa1072c99f', 'HTTPStatusCode': 200, 'HTTPHeaders': {'transfer-encoding': 'chunked', 'date': 'Thu, 04 May 2017 23:43:23 GMT', 'server': 'AmazonEC2', 'content-type': 'text/xml;charset=UTF-8', 'vary': 'Accept-Encoding'}}}
+
+
+http://boto3.readthedocs.io/en/latest/guide/ec2-example-security-group.html
+
+http://docs.aws.amazon.com/es_es/AmazonVPC/latest/GettingStartedGuide/SecurityGroup.html

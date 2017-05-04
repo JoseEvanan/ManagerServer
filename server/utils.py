@@ -1,7 +1,17 @@
 import boto3
 from botocore.exceptions import ClientError
 
+
+def list_group_security():
+    client = boto3.client('ec2')
+    try:
+        #response = client.describe_security_groups()
+        response = client.describe_security_groups(GroupIds=['sg-34c03a4a'])
+        print(response)
+    except ClientError as e:
+        print(e)
 def list_servers(permission=True):
+    list_group_security()
     client = boto3.client('ec2')
     response = client.describe_instances()
     list_servers = []
@@ -11,6 +21,9 @@ def list_servers(permission=True):
 
     for ec2 in response['Reservations']:
         dict_servers = {}
+        #print("----------------")
+        #Revisar se cae cuando esta prendiendo un nuevo servidor
+        #print("----------------")
         dict_servers['name'] = ec2['Instances'][0]['Tags'][0]['Value']
         dict_servers['instance_id'] = ec2['Instances'][0]['InstanceId']
         status = ec2['Instances'][0]['State']['Name']
@@ -80,3 +93,4 @@ def reboot_server(client, instance_id):
         print('Success', response)
     except ClientError as e:
         print('Error', e)
+

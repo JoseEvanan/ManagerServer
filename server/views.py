@@ -2,8 +2,10 @@
 import json #@UnresolvedImport
 import ast
 import boto3
+
 from botocore.exceptions import ClientError
-from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
+from django.shortcuts import redirect, render
 from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
@@ -17,7 +19,7 @@ class ManagerServerView(View):
         """ Get method """
         #https://github.com/aws/aws-cli
         list_server = list_servers()
-        return TemplateResponse(request, 'server/index.html', {'servers': list_server})
+        return render(request, 'server/index.html', {'servers': list_server})
 
 
 class ListServerView(View):
@@ -51,7 +53,7 @@ class StartServerView(View):
         instance_id = request.GET['instance_id']
         client = boto3.client('ec2')
         start_server(client, instance_id)
-        return redirect('server:manager_server')
+        return redirect(reverse('server:manager_server'))
 
 
 class StopServerView(View):
@@ -62,7 +64,8 @@ class StopServerView(View):
         instance_id = request.GET['instance_id']
         client = boto3.client('ec2')
         stop_server(client, instance_id)
-        return redirect('server:manager_server')
+        print(reverse('server:manager_server'))
+        return redirect(reverse('server:manager_server'))
 
 
 class ResetServerView(View):
@@ -73,4 +76,4 @@ class ResetServerView(View):
         instance_id = request.GET['instance_id']
         client = boto3.client('ec2')
         reboot_server(client, instance_id)
-        return redirect('server:manager_server')
+        return redirect(reverse('server:manager_server'))

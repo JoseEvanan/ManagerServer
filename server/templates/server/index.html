@@ -156,6 +156,9 @@ $('.btn-reboot').click(function(){
       '/reset_server/',
       {'instance_id': id_server},
       function(data){
+        setTimeout(function() {
+          window.location.href = "/manager_server/";
+        }, 200);
       }
   );
 
@@ -166,6 +169,9 @@ $('.btn-stop').click(function(){
       '/stop_server/',
       {'instance_id': id_server},
       function(data){
+        setTimeout(function() {
+          window.location.href = "/manager_server/";
+        }, 200);
       }
   );
 })
@@ -175,6 +181,9 @@ $('.btn-start').click(function(){
       '/start_server/',
       {'instance_id': id_server},
       function(data){
+       setTimeout(function() {
+          window.location.href = "/manager_server/";
+        }, 200);
       }
   );
 })
