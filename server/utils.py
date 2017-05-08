@@ -4,14 +4,35 @@ from botocore.exceptions import ClientError
 
 def list_group_security():
     client = boto3.client('ec2')
-    try:
-        #response = client.describe_security_groups()
-        response = client.describe_security_groups(GroupIds=['sg-34c03a4a'])
-        print(response)
-    except ClientError as e:
-        print(e)
+    list_response = []
+    response = client.describe_security_groups()
+    #response = client.describe_security_groups(GroupIds=['sg-34c03a4a'])
+    #print(response)
+    """for group in response['SecurityGroups']:
+        print(group)
+        print("----")
+        print("----")"""
+    return response['SecurityGroups']
+"""
+{'IpRanges': [{'CidrIp': '0.0.0.0/0'}],
+                 'IpProtocol': 'tcp',
+                 'ToPort': 80,
+                 'PrefixListIds': [],
+                 'FromPort': 80,
+                 'UserIdGroupPairs': [],
+                 'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}
+"""
+
+def get_details_group(id_group):
+    client = boto3.client('ec2')
+    response = client.describe_security_groups(GroupIds=[id_group])
+    print("-------")
+    print(response)
+    print("-------")
+    return response
+
+
 def list_servers(permission=True):
-    list_group_security()
     client = boto3.client('ec2')
     response = client.describe_instances()
     list_servers = []

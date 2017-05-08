@@ -10,7 +10,7 @@ from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
 from django.contrib import messages
-from .utils import start_server, stop_server, reboot_server, list_servers
+from .utils import start_server, stop_server, reboot_server, list_servers, list_group_security, get_details_group
 from .models import Servers
 
 class ManagerServerView(View):
@@ -19,7 +19,19 @@ class ManagerServerView(View):
         """ Get method """
         #https://github.com/aws/aws-cli
         list_server = list_servers()
-        return render(request, 'server/index.html', {'servers': list_server})
+        list_groups = list_group_security()
+        return render(request, 'server/index.html', {'servers': list_server,
+                                                     'group_security': list_groups})
+
+
+
+class DetailGroupView(View):
+    def get(self, request):
+        """ Get method """
+        #https://github.com/aws/aws-cli
+        id_group = request.GET['id_group']
+        list_group = get_details_group(id_group)
+        return JsonResponse({'detail_group': list_group})
 
 
 class ListServerView(View):
@@ -28,6 +40,7 @@ class ListServerView(View):
         """ Get method """
         #https://github.com/aws/aws-cli
         list_server = list_servers()
+        
         return JsonResponse({'servers': list_server})
 
 

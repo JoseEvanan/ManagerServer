@@ -17,5 +17,7 @@ urlpatterns = [
         name='list_server'),
     url(r'^save_server/$', views.SaveServerView.as_view(),
         name='save_server'),
+    url(r'^detail_group/$', views.DetailGroupView.as_view(),
+        name='detail_group'),
     
 ]

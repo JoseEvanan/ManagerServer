@@ -82,11 +82,12 @@
                   <th>PublicIp</th>
                   <th>DNSIp</th>
                   <th>Actions</th>
+                  <th style="display:none;" ></th>
                 </tr>
               </thead>
               <tbody>
                   {% for server in servers%}
-                    <tr class="fila">
+                    <tr class="row_server">
                       <td><input class="checkbox" type="checkbox" /></td>
                       <td class="name">{{ server.name }}</td>
                       <td class="id_server">{{ server.instance_id }}</td>
@@ -116,7 +117,7 @@
                            </button>
                           {% endif %}
                       </td>
-                      <td class="status_name">{{ server.state.name }}</td>
+                      <td style="display:none;" class="status_name">{{ server.state.name }}</td>
                     </tr>
                   {% endfor %}
               </tbody>
@@ -126,8 +127,116 @@
       </div>
     </div>
   </div>
+  <div class="row-fluid">
+      <div class="span12">
+        <div class="widget-box">
+          <div class="widget-title"> <span class="icon"> <i class="icon-th"></i> </span>
+            <h5>Lista de Grupos de Seguridad AWS</h5>
+            <span class="label label-info">Featured</span> </div>
+          <div class="widget-content ">
+            <table id="server_aws" class="table table-bordered table-striped with-check">
+              <thead>
+                <tr>
+                  <th><input type="checkbox" id="title-table-checkbox" name="title-table-checkbox" /></th>
+                  <th>Name</th>
+                  <th>Description</th>
+                  <th>GroupId</th>
+                  <!--
+                  <th>IpPermissions</th>
+                  <th>IpPermissionsEgress</th>
+                  -->
+                </tr>
+              </thead>
+              <tbody>
+                  {% for group in group_security%}
+                    <tr class="row_group">
+                      <td><input class="checkbox" type="checkbox" /></td>
+                      {% if group.Tags %}
+                          {% for name in group.Tags %}
+                              <td class="name">{{ name.Value}}</td>
+                          {% endfor %}
+                      {% else %}
+                          <td class="name"></td>
+                      {% endif %}
+                      
+                      <td class="name">{{ group.Description }}</td>
+                      <td class="id_group">{{ group.GroupId }}</td>
+                      <!-- 
+                      <td class="state">{{ group.IpPermissions }}</td>
+                      <td class="dns_public">{{ group.IpPermissionsEgress }}</td>
+                      -->
+                    </tr>
+                  {% endfor %}
+              </tbody>
+            </table>
+            <button type="submit" id="btn_group" class="btn btn-success">Enviar cambios </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
-
+<div class="modal fade" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 id="title_modal" class="modal-title">TITLE</h4>
+      </div>
+      <div class="modal-body">
+        <h6 id="title_groupid" class="modal-title">ID GROUP</h6>
+        <h6 id="title_groupname" class="modal-title">NAME GROUP</h6>
+        <h6 id="title_groupdescription" class="modal-title">DESCRIPTION</h6>
+        <br>
+        <h5 class="modal-title">Inbound</h5>
+        <table class="table table-bordered table-hover" id="inbound_table">
+            <thead>
+            <tr role="row" class="heading">
+                <th>FromPort</th>
+                <th>ToPort</th>
+                <th>Protocol</th>
+                <th>IpRanges</th>
+            </tr>
+            </thead>
+            <tbody id="inbound" class="boding-inbound">
+            <tr>
+               <td>Category 1</td>
+               <td>Category 1</td>
+               <td>Category 1</td>
+               <td>Category 1</td>
+               <!--
+               <td><button id="edit_category">Edit</button></td>
+                -->
+            <tr>
+            </tbody>
+        </table>
+        <br>
+        <h5 class="modal-title">Outbound</h5>
+        <table class="table table-bordered table-hover" id="outbound_table">
+            <thead>
+            <tr role="row" class="heading">
+                <th>FromPort</th>
+                <th>ToPort</th>
+                <th>Protocol</th>
+                <th>IpRanges</th>
+            </tr>
+            </thead>
+            <tbody id="outbound" class="boding-outbound">
+            <tr>
+               <td>Category 1</td>
+               <td>Category 1</td>
+               <td>Category 1</td>
+               <td>Category 1</td>
+            <tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 <!--end-main-container-part-->
 
 <!--Footer-part-->
@@ -150,8 +259,56 @@
 <script type="text/javascript">
   // This function is called from the pop-up menus to transfer to
   // a different page. Ignore if the value returned is a null string:
+
+$('.row_group').click(function(){
+  
+  
+  var id_group = $(this).closest('.row_group').find('.id_group').text();
+  $.get(
+      '/detail_group/',
+      {'id_group': id_group},
+      function(data){
+        var group = data.detail_group.SecurityGroups[0]
+        $("#title_modal").text(group.Tags[0].Value)
+        $("#title_groupid").text(" ID Group :  " + group.GroupId)
+        $("#title_groupname").text(" Name Group :  " + group.GroupName)
+        $("#title_groupdescription").text(" Description Group :  " + group.Description)
+        perminbound(group.IpPermissions)
+        permoutbound(group.IpPermissionsEgress)
+        console.log(group)
+      }
+  );
+  
+  setTimeout(function() {
+     $("#myModal").modal("show");
+  }, 300);
+})
+
+function perminbound(data){
+  $("#inbound").empty();
+  $.each(data, function(i, item) {
+      FromPort = "<td>" + item.FromPort + "</td>"
+      ToPort = "<td>" + item.ToPort + "</td>"
+      Protocol = "<td>" + item.IpProtocol + "</td>"
+      IpRanges = "<td>" + item.IpRanges + "</td>"
+      $('#inbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
+  })
+}
+
+function permoutbound(data){
+  $("#outbound").empty();
+  $.each(data, function(i, item) {
+      FromPort = "<td>" + item.FromPort + "</td>"
+      ToPort = "<td>" + item.ToPort + "</td>"
+      Protocol = "<td>" + item.IpProtocol + "</td>"
+      IpRanges = "<td>" + item.IpRanges + "</td>"
+      $('#outbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
+  })
+}
+
+
 $('.btn-reboot').click(function(){
-  var id_server = $(this).closest('.fila').find('.id_server').text();
+  var id_server = $(this).closest('.row_server').find('.id_server').text();
   $.get(
       '/reset_server/',
       {'instance_id': id_server},
@@ -164,7 +321,7 @@ $('.btn-reboot').click(function(){
 
 })
 $('.btn-stop').click(function(){
-  var id_server = $(this).closest('.fila').find('.id_server').text();
+  var id_server = $(this).closest('.row_server').find('.id_server').text();
   $.get(
       '/stop_server/',
       {'instance_id': id_server},
@@ -176,7 +333,7 @@ $('.btn-stop').click(function(){
   );
 })
 $('.btn-start').click(function(){
-  var id_server = $(this).closest('.fila').find('.id_server').text();
+  var id_server = $(this).closest('.row_server').find('.id_server').text();
   $.get(
       '/start_server/',
       {'instance_id': id_server},
