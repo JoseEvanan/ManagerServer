@@ -23,12 +23,10 @@ def list_group_security():
                  'Ipv6Ranges': [{'CidrIpv6': '::/0'}]}
 """
 
+
 def get_details_group(id_group):
     client = boto3.client('ec2')
     response = client.describe_security_groups(GroupIds=[id_group])
-    print("-------")
-    print(response)
-    print("-------")
     return response
 
 
@@ -115,3 +113,31 @@ def reboot_server(client, instance_id):
     except ClientError as e:
         print('Error', e)
 
+
+def create_group_security():
+    ec2 = boto3.client('ec2')
+
+    response = ec2.describe_vpcs()
+    vpc_id = response.get('Vpcs', [{}])[0].get('VpcId', '')
+
+    response = ec2.create_security_group(GroupName='SECURITY_GROUP_NAME',
+                                         Description='DESCRIPTION',
+                                         VpcId=vpc_id)
+    security_group_id = response['GroupId']
+    return security_group_id
+
+
+def authorize_group_ingress():
+    security_group_id = create_group_security()
+    data = ec2.authorize_security_group_ingress(
+        GroupId=security_group_id,
+        IpPermissions=[
+            {'IpProtocol': 'tcp',
+             'FromPort': 80,
+             'ToPort': 80,
+             'IpRanges': [{'CidrIp': '0.0.0.0/0'}]},
+            {'IpProtocol': 'tcp',
+             'FromPort': 22,
+             'ToPort': 22,
+             'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}
+        ])
