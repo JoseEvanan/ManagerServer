@@ -292,14 +292,28 @@ function perminbound(data){
         FromPort = "<td>All</td>"
         ToPort = "<td>All</td>"
       }else{
-        Protocol = "<td>" + item.IpProtocol + "</td>"
-        FromPort = "<td>" + item.FromPort + "</td>"
-        ToPort = "<td>" + item.ToPort + "</td>"
+        Protocol = "<td contenteditable='true'>" + item.IpProtocol + "</td>"
+        FromPort = "<td contenteditable='true'>" + item.FromPort + "</td>"
+        ToPort = "<td contenteditable='true'>" + item.ToPort + "</td>"
       }
       IpRanges = "<td>" + item.IpRanges[0].CidrIp + "</td>"
-      $('#inbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
+      action = '<td><button type="submit" class="btn btn-reboot btn-primary">\
+                 <i class="icon-refresh" aria-hidden="true"></i>\
+                 </button>\
+                <button type="submit" class="btn btn-stop btn-danger">\
+                  <i class="icon-remove" aria-hidden="true"></i>\
+                </button><td>'
+      $('#inbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
   })
 }
+
+/* 
+
+add class editable 
+$('.edit').click(function(){
+    $(this).parent().removeClass('old_row').addClass('new_row').html('<td>3</td><td>4</td><td>Save</td>');
+});
+*/
 
 function permoutbound(data){
   $("#outbound").empty();
@@ -315,8 +329,17 @@ function permoutbound(data){
       }
           
 
-      IpRanges = "<td>" + item.IpRanges[0].CidrIp + "</td>"
-      $('#outbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
+      IpRanges = "<td>" + item.IpRanges[0].CidrIp + "<td>"
+      action = '<td><button type="submit" class="btn btn-reboot btn-primary">\
+                 <i class="icon-refresh" aria-hidden="true"></i>\
+                 </button>\
+                  <button type="submit" class="btn btn-stop btn-danger">\
+                    <i class="icon-off" aria-hidden="true"></i>\
+                  </button>\
+                 <button type="submit" class="btn btn-start btn-success">\
+                   <i class="icon-play" aria-hidden="true"></i>\
+                 </button><td>'
+      $('#outbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
   })
 }
 
