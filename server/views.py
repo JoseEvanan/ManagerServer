@@ -90,3 +90,5 @@ class ResetServerView(View):
         client = boto3.client('ec2')
         reboot_server(client, instance_id)
         return redirect(reverse('server:manager_server'))
+
+

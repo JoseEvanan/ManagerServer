@@ -61,6 +61,7 @@ def list_servers(permission=True):
     list_servers.sort(key=lambda server: server['name'])
     return list_servers
 
+
 def start_server(client, instance_id):
     # Do a dryrun first to verify permissions
     print("START_SERVER")
@@ -96,6 +97,7 @@ def stop_server(client, instance_id):
         print(response)
     except ClientError as e:
         print(e)
+
 
 def reboot_server(client, instance_id):
     print("REBOOT_SERVER")
@@ -141,3 +143,63 @@ def authorize_group_ingress():
              'ToPort': 22,
              'IpRanges': [{'CidrIp': '0.0.0.0/0'}]}
         ])
+
+
+def remove_perm_ingress(id_group, perm):
+    ec2 = boto3.resource('ec2')
+    sec_group = ec2.SecurityGroup(id_group)
+    sec_group.revoke_ingress(IpProtocol=perm.protocol,
+                             CidrIp=perm.ip,
+                             FromPort=perm.fromport,
+                             ToPort=perm.toport)
+
+
+def remove_perm_egress(id_group, perm):
+    ec2 = boto3.resource('ec2')
+    sec_group = ec2.SecurityGroup(id_group)
+    sec_group.revoke_egress(IpProtocol=perm.protocol,
+                            CidrIp=perm.ip,
+                            FromPort=perm.fromport,
+                            ToPort=perm.toport)
+
+
+def add_perm_ingress(id_group, perm):
+    ec2 = boto3.resource('ec2')
+    sec_group = ec2.SecurityGroup(id_group)
+    sec_group.authorize_ingress(IpProtocol=perm.protocol,
+                                CidrIp=perm.ip,
+                                FromPort=perm.fromport,
+                                ToPort=perm.toport)
+    
+    print("add_perm_ingress")
+
+def add_perm_egress(id_group, perm):
+    ec2 = boto3.resource('ec2')
+    sec_group = ec2.SecurityGroup(id_group)
+    sec_group.authorize_egress(IpProtocol=perm.protocol,
+                               CidrIp=perm.ip,
+                               FromPort=perm.fromport,
+                               ToPort=perm.toport)
+    print("add_perm_egress")
+
+
+
+
+
+#ec2 = boto3.resource('ec2')
+#sec_group = ec2.SecurityGroup(id_group)
+#sec_group.revoke_egress(IpProtocol="tcp",
+#                        CidrIp="0.0.0.0/0",
+#                        FromPort=3306,
+#                        ToPort=3306)
+
+
+
+#sec_group.revoke_ingress(IpProtocol="tcp", CidrIp="0.0.0.0/0", FromPort=3306, ToPort=3306)
+# authorize_egress()
+
+#conn = boto3.client('ec2')
+#conn.authorize_security_group_ingress(GroupId=my_group_id,IpProtocol="tcp",CidrIp="new_ip/32",FromPort=443,ToPort=443)
+
+#security_group.authorize_ingress(IpProtocol="tcp",CidrIp="0.0.0.0/0",FromPort=3306,ToPort=3306)
+

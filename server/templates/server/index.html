@@ -287,9 +287,15 @@ $('.row_group').click(function(){
 function perminbound(data){
   $("#inbound").empty();
   $.each(data, function(i, item) {
-      FromPort = "<td>" + item.FromPort + "</td>"
-      ToPort = "<td>" + item.ToPort + "</td>"
-      Protocol = "<td>" + item.IpProtocol + "</td>"
+    if(item.IpProtocol == -1){
+        Protocol = "<td>All</td>"
+        FromPort = "<td>All</td>"
+        ToPort = "<td>All</td>"
+      }else{
+        Protocol = "<td>" + item.IpProtocol + "</td>"
+        FromPort = "<td>" + item.FromPort + "</td>"
+        ToPort = "<td>" + item.ToPort + "</td>"
+      }
       IpRanges = "<td>" + item.IpRanges[0].CidrIp + "</td>"
       $('#inbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
   })
@@ -313,6 +319,7 @@ function permoutbound(data){
       $('#outbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + '</tr>');
   })
 }
+
 
 
 $('.btn-reboot').click(function(){
