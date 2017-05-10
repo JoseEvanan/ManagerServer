@@ -141,10 +141,6 @@
                   <th>Name</th>
                   <th>Description</th>
                   <th>GroupId</th>
-                  <!--
-                  <th>IpPermissions</th>
-                  <th>IpPermissionsEgress</th>
-                  -->
                 </tr>
               </thead>
               <tbody>
@@ -161,10 +157,7 @@
                       
                       <td class="name">{{ group.Description }}</td>
                       <td class="id_group">{{ group.GroupId }}</td>
-                      <!-- 
-                      <td class="state">{{ group.IpPermissions }}</td>
-                      <td class="dns_public">{{ group.IpPermissionsEgress }}</td>
-                      -->
+
                     </tr>
                   {% endfor %}
               </tbody>
@@ -195,6 +188,7 @@
                 <th>ToPort</th>
                 <th>Protocol</th>
                 <th>IpRanges</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody id="inbound" class="boding-inbound">
@@ -203,9 +197,7 @@
                <td>Category 1</td>
                <td>Category 1</td>
                <td>Category 1</td>
-               <!--
-               <td><button id="edit_category">Edit</button></td>
-                -->
+               <td>Category 1</td>
             <tr>
             </tbody>
         </table>
@@ -218,10 +210,12 @@
                 <th>ToPort</th>
                 <th>Protocol</th>
                 <th>IpRanges</th>
+                <th>Actions</th>
             </tr>
             </thead>
             <tbody id="outbound" class="boding-outbound">
             <tr>
+               <td>Category 1</td>
                <td>Category 1</td>
                <td>Category 1</td>
                <td>Category 1</td>
@@ -261,13 +255,12 @@
   // a different page. Ignore if the value returned is a null string:
 
 $('.row_group').click(function(){
-  
-  
   var id_group = $(this).closest('.row_group').find('.id_group').text();
   $.get(
       '/detail_group/',
       {'id_group': id_group},
       function(data){
+        console.log(data)
         var group = data.detail_group.SecurityGroups[0]
         $("#title_modal").text(group.Tags[0].Value)
         $("#title_groupid").text(" ID Group :  " + group.GroupId)
@@ -287,8 +280,8 @@ $('.row_group').click(function(){
 function perminbound(data){
   $("#inbound").empty();
   $.each(data, function(i, item) {
-    if(item.IpProtocol == -1){
-        Protocol = "<td>All</td>"
+    if(item.IpProtocol == -10){
+        Protocol = "<td >All</td>"
         FromPort = "<td>All</td>"
         ToPort = "<td>All</td>"
       }else{
@@ -297,13 +290,13 @@ function perminbound(data){
         ToPort = "<td contenteditable='true'>" + item.ToPort + "</td>"
       }
       IpRanges = "<td>" + item.IpRanges[0].CidrIp + "</td>"
-      action = '<td><button type="submit" class="btn btn-reboot btn-primary">\
+      action = '<td><button type="submit" class="btn btn-change btn-primary">\
                  <i class="icon-refresh" aria-hidden="true"></i>\
                  </button>\
-                <button type="submit" class="btn btn-stop btn-danger">\
+                <button type="submit" class="btn btn-remove btn-danger">\
                   <i class="icon-remove" aria-hidden="true"></i>\
-                </button><td>'
-      $('#inbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
+                </button></td>'
+      $('#inbound').append('<tr class="in-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
   })
 }
 
@@ -318,32 +311,43 @@ $('.edit').click(function(){
 function permoutbound(data){
   $("#outbound").empty();
   $.each(data, function(i, item) {
-      if(item.IpProtocol == -1){
-        Protocol = "<td>All</td>"
-        FromPort = "<td>All</td>"
-        ToPort = "<td>All</td>"
+      if(item.IpProtocol == -10){
+        Protocol = "<td class='protocol'>All</td>"
+        FromPort = "<td class='fromport'>All</td>"
+        ToPort = "<td class='toport'>All</td>"
       }else{
-        Protocol = "<td>" + item.IpProtocol + "</td>"
-        FromPort = "<td>" + item.FromPort + "</td>"
-        ToPort = "<td>" + item.ToPort + "</td>"
+        Protocol = "<td class='protocol'>" + item.IpProtocol + "</td>"
+        FromPort = "<td class='fromport'>" + item.FromPort + "</td>"
+        ToPort = "<td class='toport'>" + item.ToPort + "</td>"
       }
           
 
-      IpRanges = "<td>" + item.IpRanges[0].CidrIp + "<td>"
-      action = '<td><button type="submit" class="btn btn-reboot btn-primary">\
+      IpRanges = "<td class='ipranges'>" + item.IpRanges[0].CidrIp + "</td>"
+      action = '<td><button type="submit"  onClick="eventOutbound(this)" class="btn btn-change btn-primary">\
                  <i class="icon-refresh" aria-hidden="true"></i>\
                  </button>\
-                  <button type="submit" class="btn btn-stop btn-danger">\
+                  <button type="submit" class="btn btn-remove btn-danger">\
                     <i class="icon-off" aria-hidden="true"></i>\
-                  </button>\
-                 <button type="submit" class="btn btn-start btn-success">\
-                   <i class="icon-play" aria-hidden="true"></i>\
-                 </button><td>'
-      $('#outbound').append('<tr class="child">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
+                  </button></td>'
+      $('#outbound').append('<tr class="out-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
   })
 }
 
 
+
+$('.btn-change').click(function(){
+  console.log("outbound");
+  
+})
+function eventOutbound(){
+  console.log("entro")
+  (this).closest("tr").find("td").each(function(i, nrElt) {
+        var id = nrElt.text();// this will be the text of each <td>
+        console.log(i+"");
+   });  
+
+
+}
 
 $('.btn-reboot').click(function(){
   var id_server = $(this).closest('.row_server').find('.id_server').text();
@@ -358,6 +362,8 @@ $('.btn-reboot').click(function(){
   );
 
 })
+
+
 $('.btn-stop').click(function(){
   var id_server = $(this).closest('.row_server').find('.id_server').text();
   $.get(
@@ -370,6 +376,8 @@ $('.btn-stop').click(function(){
       }
   );
 })
+
+
 $('.btn-start').click(function(){
   var id_server = $(this).closest('.row_server').find('.id_server').text();
   $.get(
