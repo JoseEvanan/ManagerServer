@@ -19,5 +19,10 @@ urlpatterns = [
         name='save_server'),
     url(r'^detail_group/$', views.DetailGroupView.as_view(),
         name='detail_group'),
+    url(r'^action_remove/$', views.RemovePermView.as_view(),
+        name='action_remove'),
+    url(r'^change_perm/$', views.ChangePermView.as_view(),
+        name='change_perm'),
     
 ]
+

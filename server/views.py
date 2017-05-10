@@ -10,8 +10,17 @@ from django.views.generic import View
 from django.http.response import JsonResponse, HttpResponse
 from django.template.response import TemplateResponse
 from django.contrib import messages
-from .utils import start_server, stop_server, reboot_server, list_servers, list_group_security, get_details_group
+from .utils import start_server, stop_server, reboot_server,\
+list_servers, list_group_security, get_details_group,\
+remove_perm_ingress, add_perm_ingress, remove_perm_egress,\
+add_perm_ingress, add_perm_egress
 from .models import Servers
+
+
+
+
+
+
 
 class ManagerServerView(View):
     """ View Manager server AWS """
@@ -33,7 +42,81 @@ class DetailGroupView(View):
         list_group = get_details_group(id_group)
         return JsonResponse({'detail_group': list_group})
 
+class RemovePermView(View):
+    def get(self, request):
+        """ Get method """
+        data_perm = {}
+        id_group = request.GET['id_group']
+        action = request.GET['action']
+        type_perm = request.GET['type']
+        data_perm['protocol'] = request.GET['Protocol']
+        data_perm['fromport'] = request.GET['FromPort']
+        data_perm['toport'] = request.GET['ToPort']
+        
+        data_perm['ip'] = request.GET['IpRanges']
+        if data_perm['ip'] == 'null':
+            data_perm['ip'] = None
+        if type_perm == 'inbound':
+            status = remove_perm_ingress(id_group, data_perm)
+        else:
+            status = remove_perm_egress(id_group, data_perm)
+        
+        if status:
+            response = "Cambios Actualizados"
+        else:
+            response = "Cambios NO Actualizados"
+        return JsonResponse({'status': response})
 
+
+class ChangePermView(View):
+    def get(self, request):
+        """ Get method """
+        id_group = request.GET['id_group']
+        type_event = request.GET['type_event']
+        perm_present = {}
+        perm_past = {}
+        perm_past['protocol'] = request.GET['past_protocol']
+        perm_past['fromport'] = request.GET['past_frmoip']
+        perm_past['toport'] = request.GET['past_toip']
+        perm_past['ip'] = request.GET['past_ips']
+        perm_present['protocol'] = request.GET['present_protocol']
+        perm_present['fromport'] = request.GET['present_frmoip']
+        perm_present['toport'] = request.GET['present_toip']
+        perm_present['ip'] = request.GET['present_ips']
+        if data_perm['ip'] == 'null':
+            data_perm['ip'] = None
+        if type_event == 'inbound':
+            status = remove_perm_ingress(id_group, perm_past)
+            if status:
+                status = add_perm_ingress(id_group, perm_present)
+        else:
+            status = remove_perm_egress(id_group, perm_past)
+            if status:
+                status = add_perm_egress(id_group, perm_present)
+
+        if status:
+            response = "Cambios Actualizados"
+        else:
+            response = "Cambios NO Actualizados"
+        return JsonResponse({'status': response})
+
+
+"""
+{'id_group': id_group,
+       'past_protocol': perm_past['protocol'],
+       'past_frmoip': perm_past['frmoip'],
+       'past_toip': perm_past['toip'],
+       'past_ips': perm_past['ips'],
+       'present_protocol': perm_past['protocol'],
+       'present_frmoip': perm_past['frmoip'],
+       'present_toip': perm_past['toip'],
+       'present_ips': perm_past['ips']
+     },
+IpProtocol=perm.protocol,
+                             CidrIp=perm.ip,
+                             FromPort=perm.fromport,
+                             ToPort=perm.toport)
+"""
 class ListServerView(View):
     """ View Start server AWS """
     def get(self, request):

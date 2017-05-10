@@ -175,7 +175,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 id="title_modal" class="modal-title">TITLE</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" id="div_table">
         <h6 id="title_groupid" class="modal-title">ID GROUP</h6>
         <h6 id="title_groupname" class="modal-title">NAME GROUP</h6>
         <h6 id="title_groupdescription" class="modal-title">DESCRIPTION</h6>
@@ -224,9 +224,55 @@
             </tbody>
         </table>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+      <div class="modal-body" id="div_form" style="display:none;">
+         <div class="widget-box">
+        <div class="widget-title"> <span class="icon"> <i class="icon-align-justify"></i> </span>
+          <h5>IdGroup</h5>
+        </div>
+        <div class="widget-content nopadding">
+          <div class="form-horizontal">
+          <div class="control-group">
+              <label class="control-label">Protocolo : </label>
+              <div class="controls">
+                <input type="hidden" id="new_id_group" class="span05" />
+                <input type="hidden" id="new_type" class="span05" />
+                <input type="text" id="new_protocol" data-value-past=""  class="span05" placeholder="Enter Password"  />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">FromIp :</label>
+              <div class="controls">
+                <input type="text" id="new_fromip"  data-value-past=""  class="span08" placeholder="First name" />
+              </div>
+            </div>
+            <div class="control-group">
+              <label class="control-label">ToIp :</label>
+              <div class="controls">
+                <input type="text" id="new_toip" data-value-past=""  class="span08" placeholder="Last name" />
+              </div>
+            </div>
+            
+            <div class="control-group">
+              <label class="control-label">Ip's :</label>
+              <div class="controls">
+                <input type="text" id="new_ips" data-value-past=""  class="span05" placeholder="Company name" />
+                 <span class="help-block">Example Format: 192.168.52.0/24 </span>
+              </div>
+            </div>
+            <div class="form-actions">
+             <button type="button" class="btn btn-close btn-default"  id="close_perm">Close</button>
+              <button  class="btn btn-success" id="save_perm" disabled="">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      </div>
+      <div  id="div_footer" class="modal-footer">
+        <button type="button" class="btn btn-close btn-default" data-dismiss="modal">Close</button>
+        <!--
+          <button type="button" class="btn btn-primary">Save changes</button>
+        -->
+        
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
@@ -253,101 +299,223 @@
 <script type="text/javascript">
   // This function is called from the pop-up menus to transfer to
   // a different page. Ignore if the value returned is a null string:
-
+var obj_perm = {};
+var cont = 0;
+var group_id = "";
 $('.row_group').click(function(){
   var id_group = $(this).closest('.row_group').find('.id_group').text();
+  get_detail_group(id_group);
+})
+
+
+$('#div_form :input').click(function(){
+  $("#save_perm").removeAttr("disabled");
+})
+
+
+$('#save_perm').click(function(){
+  id_group = $('#new_id_group').val()
+  type_event = $('#new_type').val()
+  perm_past = {}
+  perm_present = {}
+  perm_present['protocol'] = $('#new_protocol').val()
+  perm_past['protocol'] = $("#new_protocol").data("value-past")
+  perm_present['frmoip'] = $('#new_fromip').val()
+  perm_past['frmoip'] = $("#new_fromip").data("value-past")
+  perm_present['toip'] = $('#new_toip').val()
+  perm_past['toip'] = $("#new_toip").data("value-past")
+  perm_present['ips'] = $('#new_ips').val()
+  perm_past['ips'] = $("#new_ips").data("value-past")
+  if (perm_past['ips'] == null){
+    perm_past['ips'] = "null"
+    }
+  alert(perm_past['ìps'])
+  $.get(
+      '/change_perm/',
+      {'id_group': id_group,
+       'type_event': type_event,
+       'past_protocol': perm_past['protocol'],
+       'past_frmoip': perm_past['frmoip'],
+       'past_toip': perm_past['toip'],
+       'past_ips': perm_past['ips'],
+       'present_protocol': perm_present['protocol'],
+       'present_frmoip': perm_present['frmoip'],
+       'present_toip': perm_present['toip'],
+       'present_ips': perm_present['ips']
+     },
+      function(data){
+        console.log("CHANGE!" + data.status)
+      }
+  );
+  $('#div_table').show();
+  $('#div_footer').show();
+  $('#div_form').hide();
+  $("#myModal").modal("hide");
+})
+
+
+function get_detail_group(id_group){
   $.get(
       '/detail_group/',
       {'id_group': id_group},
       function(data){
-        console.log(data)
         var group = data.detail_group.SecurityGroups[0]
         $("#title_modal").text(group.Tags[0].Value)
         $("#title_groupid").text(" ID Group :  " + group.GroupId)
         $("#title_groupname").text(" Name Group :  " + group.GroupName)
         $("#title_groupdescription").text(" Description Group :  " + group.Description)
+        obj_perm = {}; 
+        cont = 0;
+        group_id = group.GroupId;
         perminbound(group.IpPermissions)
         permoutbound(group.IpPermissionsEgress)
-        console.log(group)
       }
   );
   
   setTimeout(function() {
      $("#myModal").modal("show");
   }, 300);
-})
+}
+
 
 function perminbound(data){
   $("#inbound").empty();
+
   $.each(data, function(i, item) {
-    if(item.IpProtocol == -10){
+    var perm = {}
+    if(item.IpProtocol == -1){
         Protocol = "<td >All</td>"
         FromPort = "<td>All</td>"
         ToPort = "<td>All</td>"
+        perm['Protocol'] = null;
+        perm['FromPort'] = null;
+        perm['ToPort'] = -1;
+
       }else{
-        Protocol = "<td contenteditable='true'>" + item.IpProtocol + "</td>"
-        FromPort = "<td contenteditable='true'>" + item.FromPort + "</td>"
-        ToPort = "<td contenteditable='true'>" + item.ToPort + "</td>"
+        Protocol = "<td>" + item.IpProtocol + "</td>"
+        FromPort = "<td>" + item.FromPort + "</td>"
+        ToPort = "<td>" + item.ToPort + "</td>"
+        perm['Protocol'] = item.IpProtocol;
+        perm['FromPort'] = item.FromPort;
+        perm['ToPort'] = item.ToPort;
       }
-      IpRanges = "<td>" + item.IpRanges[0].CidrIp + "</td>"
-      action = '<td><button type="submit" class="btn btn-change btn-primary">\
-                 <i class="icon-refresh" aria-hidden="true"></i>\
-                 </button>\
-                <button type="submit" class="btn btn-remove btn-danger">\
-                  <i class="icon-remove" aria-hidden="true"></i>\
-                </button></td>'
-      $('#inbound').append('<tr class="in-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
+      if((item.IpRanges).length > 0){
+        
+        for (var i = 0; i < (item.IpRanges).length; i++) {
+          IpRanges = "<td>" + item.IpRanges[i].CidrIp + "</td>"
+          perm['IpRanges'] = item.IpRanges[i].CidrIp;
+          obj_perm[cont+""] = perm
+          action = '<td><button type="submit" id="'+cont+'-change-inbound"  onClick="eventGroup(this.id)" class="btn btn-change btn-primary">\
+                     <i class="icon-refresh" aria-hidden="true"></i>\
+                     </button>\
+                    <button type="submit" id="'+cont+'-remove-inbound" onClick="eventGroup(this.id)" class="btn btn-remove btn-danger">\
+                      <i class="icon-remove" aria-hidden="true"></i>\
+                    </button></td>'
+          cont = cont + 1
+          $('#inbound').append('<tr class="in-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
+        }
+      }else{
+        
+        IpRanges = "<td> </td>"
+        perm['IpRanges'] = null;
+        obj_perm[cont+""] = perm
+        action = '<td><button type="submit" id="'+cont+'-change-inbound"  onClick="eventGroup(this.id)" class="btn btn-change btn-primary">\
+                   <i class="icon-refresh" aria-hidden="true"></i>\
+                   </button>\
+                  <button type="submit" id="'+cont+'-remove-inbound" onClick="eventGroup(this.id)" class="btn btn-remove btn-danger">\
+                    <i class="icon-remove" aria-hidden="true"></i>\
+                  </button></td>'
+        cont = cont + 1
+        $('#inbound').append('<tr class="in-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
+      }
+      
   })
 }
 
-/* 
-
-add class editable 
-$('.edit').click(function(){
-    $(this).parent().removeClass('old_row').addClass('new_row').html('<td>3</td><td>4</td><td>Save</td>');
-});
-*/
 
 function permoutbound(data){
   $("#outbound").empty();
   $.each(data, function(i, item) {
-      if(item.IpProtocol == -10){
+    var perm = {}
+      console.log("out ")
+      console.log(item)
+      if(item.IpProtocol == -1){
         Protocol = "<td class='protocol'>All</td>"
         FromPort = "<td class='fromport'>All</td>"
         ToPort = "<td class='toport'>All</td>"
+        perm['Protocol'] = null;
+        perm['FromPort'] = null;
+        perm['ToPort'] = -1;
       }else{
         Protocol = "<td class='protocol'>" + item.IpProtocol + "</td>"
         FromPort = "<td class='fromport'>" + item.FromPort + "</td>"
         ToPort = "<td class='toport'>" + item.ToPort + "</td>"
+        perm['Protocol'] = item.IpProtocol;
+        perm['FromPort'] = item.FromPort;
+        perm['ToPort'] = item.ToPort;
       }
-          
-
-      IpRanges = "<td class='ipranges'>" + item.IpRanges[0].CidrIp + "</td>"
-      action = '<td><button type="submit"  onClick="eventOutbound(this)" class="btn btn-change btn-primary">\
+      IpRanges = "<td class='ipranges'>" + item.IpRanges[0].CidrIp + "</td>"     
+      perm['IpRanges'] = item.IpRanges[0].CidrIp;
+      obj_perm[cont+""] = perm
+      
+      action = '<td><button type="submit" id="'+cont+'-change-outbound" onClick="eventGroup(this.id)" class="btn btn-change btn-primary">\
                  <i class="icon-refresh" aria-hidden="true"></i>\
                  </button>\
-                  <button type="submit" class="btn btn-remove btn-danger">\
+                  <button type="submit" id="'+cont+'-remove-outbound" onClick="eventGroup(this.id)" class="btn btn-remove btn-danger">\
                     <i class="icon-off" aria-hidden="true"></i>\
                   </button></td>'
+      cont = cont + 1
       $('#outbound').append('<tr class="out-bound">' + FromPort + ToPort + Protocol + IpRanges + action + '</tr>');
   })
 }
 
 
 
-$('.btn-change').click(function(){
-  console.log("outbound");
+function eventGroup(id_action){
+  console.log("eventInbound")
+  var id = parseInt((id_action.split("-"))[0])
+  var action = id_action.split("-")[1].trim()
+  var type = id_action.split("-")[2].trim()
+  var perm = obj_perm[id]
+  perm['action'] = action
+  perm['id_group'] = group_id
+  perm['type'] = type
+  console.log(perm)
+  if(action == "remove"){
+    $.get(
+      '/action_remove/',
+      perm,
+      function(data){
+        console.log("REMOVE ----- " + data.status)
+        $("#myModal").modal("hide");
+      }
+  )
+  }else{
+    $('#div_table').hide();
+    $('#div_footer').hide();
+    $('#div_form').show();
+    $('#new_id_group').val(group_id)
+    $('#new_type').val(type)
+    $('#new_protocol').val(perm.Protocol)
+    $("#new_protocol").attr("data-value-past", perm.Protocol);
+    $('#new_fromip').val(perm.FromPort)
+    $("#new_fromip").attr("data-value-past", perm.FromPort);
+    $('#new_toip').val(perm.ToPort)
+    $("#new_toip").attr("data-value-past", perm.ToPort);
+    $('#new_ips').val(perm.IpRanges)
+    $("#new_ips").attr("data-value-past", perm.IpRanges);
+  }
   
-})
-function eventOutbound(){
-  console.log("entro")
-  (this).closest("tr").find("td").each(function(i, nrElt) {
-        var id = nrElt.text();// this will be the text of each <td>
-        console.log(i+"");
-   });  
 
-
+  //get_detail_group(group_id);
+        
 }
+
+$('#close_perm').click(function(){
+  $('#div_table').show();
+  $('#div_footer').show();
+  $('#div_form').hide();
+})
 
 $('.btn-reboot').click(function(){
   var id_server = $(this).closest('.row_server').find('.id_server').text();
@@ -360,7 +528,6 @@ $('.btn-reboot').click(function(){
         }, 200);
       }
   );
-
 })
 
 

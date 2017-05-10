@@ -146,42 +146,68 @@ def authorize_group_ingress():
 
 
 def remove_perm_ingress(id_group, perm):
-    ec2 = boto3.resource('ec2')
-    sec_group = ec2.SecurityGroup(id_group)
-    sec_group.revoke_ingress(IpProtocol=perm.protocol,
-                             CidrIp=perm.ip,
-                             FromPort=perm.fromport,
-                             ToPort=perm.toport)
 
+        ec2 = boto3.resource('ec2')
+        sec_group = ec2.SecurityGroup(id_group)
+        if perm['ip']:
+            print("NO null")
+            sec_group.revoke_ingress(IpProtocol=perm['protocol'],
+                                         CidrIp=perm['ip'],
+                                         FromPort=int(perm['fromport']),
+                                         ToPort=int(perm['toport']))
+            if perm['protocol'] == -1:
+                sec_group.revoke_ingress(IpProtocol=perm['protocol'],
+                                         CidrIp=perm['ip'])
+            else:
+                sec_group.revoke_ingress(IpProtocol=perm['protocol'],
+                                         CidrIp=perm['ip'],
+                                         FromPort=int(perm['fromport']),
+                                         ToPort=int(perm['toport']))
+        else:
+            print("null")
+            sec_group.revoke_ingress(IpProtocol=perm['protocol'],
+                                         CidrIp='::/0',
+                                         FromPort=int(perm['fromport']),
+                                         ToPort=int(perm['toport']))
+
+    
+       
 
 def remove_perm_egress(id_group, perm):
-    ec2 = boto3.resource('ec2')
-    sec_group = ec2.SecurityGroup(id_group)
-    sec_group.revoke_egress(IpProtocol=perm.protocol,
-                            CidrIp=perm.ip,
-                            FromPort=perm.fromport,
-                            ToPort=perm.toport)
-
+    try:
+        ec2 = boto3.resource('ec2')
+        sec_group = ec2.SecurityGroup(id_group)
+        sec_group.revoke_egress(IpProtocol=perm['protocol'],
+                                CidrIp=perm['ip'],
+                                FromPort=int(perm['fromport']),
+                                ToPort=int(perm['toport']))
+        return True
+    except:
+        return False
 
 def add_perm_ingress(id_group, perm):
-    ec2 = boto3.resource('ec2')
-    sec_group = ec2.SecurityGroup(id_group)
-    sec_group.authorize_ingress(IpProtocol=perm.protocol,
-                                CidrIp=perm.ip,
-                                FromPort=perm.fromport,
-                                ToPort=perm.toport)
-    
-    print("add_perm_ingress")
+    try:
+        ec2 = boto3.resource('ec2')
+        sec_group = ec2.SecurityGroup(id_group)
+        sec_group.authorize_ingress(IpProtocol=perm['protocol'],
+                                CidrIp=perm['ip'],
+                                FromPort=int(perm['fromport']),
+                                ToPort=int(perm['toport']))
+        return True
+    except:
+        return False
 
 def add_perm_egress(id_group, perm):
-    ec2 = boto3.resource('ec2')
-    sec_group = ec2.SecurityGroup(id_group)
-    sec_group.authorize_egress(IpProtocol=perm.protocol,
-                               CidrIp=perm.ip,
-                               FromPort=perm.fromport,
-                               ToPort=perm.toport)
-    print("add_perm_egress")
-
+    try:
+        ec2 = boto3.resource('ec2')
+        sec_group = ec2.SecurityGroup(id_group)
+        sec_group.authorize_egress(IpProtocol=perm['protocol'],
+                                CidrIp=perm['ip'],
+                                FromPort=int(perm['fromport']),
+                                ToPort=int(perm['toport']))
+        return True
+    except:
+        return False
 
 
 
